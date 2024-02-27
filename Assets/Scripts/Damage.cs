@@ -7,6 +7,7 @@ public class Damage : MonoBehaviour
 {
     public GameManagerScript GameManager;
     [SerializeField] private GameObject player;
+    [SerializeField] private GameObject particle;
     [SerializeField] private TextMeshProUGUI scoreText;
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -14,6 +15,7 @@ public class Damage : MonoBehaviour
         if (collision.gameObject.CompareTag("Damage"))
         {
             GameManager.GameOver();
+            particle.SetActive(true);
             player.SetActive(false);
         }
     }
