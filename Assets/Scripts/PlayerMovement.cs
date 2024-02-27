@@ -8,12 +8,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpHeight = 150;
 
     [SerializeField] private Transform groundCheck;
+    [SerializeField] private Transform sideCheck;
     [SerializeField] private LayerMask groundLayer;
 
     private Animator animator;
     private Rigidbody2D rigidbody2d;
     private bool isFacingRight;
     private bool isGrounded;
+    private bool isTouchingSide;
 
     private void Start()
     {
@@ -21,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
         rigidbody2d = GetComponent<Rigidbody2D>();
         isFacingRight = true;
         isGrounded = false;
+        isTouchingSide = false;
     }
 
     private void Update()
@@ -44,9 +47,16 @@ public class PlayerMovement : MonoBehaviour
 
         if ((move > 0 && !isFacingRight) || (move < 0 && isFacingRight)) Flip();
 
+        // Check for ground and side collisions separately
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, .15f, groundLayer);
-        animator.SetBool("IsGrounded", isGrounded);
-        animator.SetFloat("VerticalSpeed", rigidbody2d.velocity.y);
+        isTouchingSide = Physics2D.OverlapCircle(sideCheck.position, .15f, groundLayer);
+
+        // Only update animator state if not touching the side
+        if (!isTouchingSide)
+        {
+            animator.SetBool("IsGrounded", isGrounded);
+            animator.SetFloat("VerticalSpeed", rigidbody2d.velocity.y);
+        }
     }
 
     private void Flip()
